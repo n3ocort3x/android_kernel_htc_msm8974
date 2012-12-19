@@ -4,7 +4,7 @@
 #include "cpu.h"
 
 
-static const struct cpu_dev __cpuinitconst umc_cpu_dev = {
+static const struct cpu_dev umc_cpu_dev = {
 	.c_vendor	= "UMC",
 	.c_ident	= { "UMC UMC UMC" },
 	.c_models = {
