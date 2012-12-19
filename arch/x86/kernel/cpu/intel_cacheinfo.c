@@ -27,7 +27,7 @@ struct _cache_table {
 #define MB(x)	((x) * 1024)
 
 
-static const struct _cache_table __cpuinitconst cache_table[] =
+static const struct _cache_table cache_table[] =
 {
 	{ 0x06, LVL_1_INST, 8 },	
 	{ 0x08, LVL_1_INST, 16 },	
@@ -187,7 +187,7 @@ union l3_cache {
 	unsigned val;
 };
 
-static const unsigned short __cpuinitconst assocs[] = {
+static const unsigned short assocs[] = {
 	[1] = 1,
 	[2] = 2,
 	[4] = 4,
@@ -201,8 +201,8 @@ static const unsigned short __cpuinitconst assocs[] = {
 	[0xf] = 0xffff 
 };
 
-static const unsigned char __cpuinitconst levels[] = { 1, 1, 2, 3 };
-static const unsigned char __cpuinitconst types[] = { 1, 2, 3, 3 };
+static const unsigned char levels[] = { 1, 1, 2, 3 };
+static const unsigned char types[] = { 1, 2, 3, 3 };
 
 static void
 amd_cpuid4(int leaf, union _cpuid4_leaf_eax *eax,
