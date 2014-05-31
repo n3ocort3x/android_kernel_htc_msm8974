@@ -182,12 +182,13 @@ void __init parse_early_options(char *cmdline);
 #define module_init(initfn)					\
 	static inline initcall_t __inittest(void)		\
 	{ return initfn; }					\
-	int init_module(void) __attribute__((alias(#initfn)));
+	int init_module(void) __section(.init) __attribute__((alias(#initfn)));
 
 #define module_exit(exitfn)					\
 	static inline exitcall_t __exittest(void)		\
 	{ return exitfn; }					\
-	void cleanup_module(void) __attribute__((alias(#exitfn)));
+       void cleanup_module(void) __section(.exit)              \
+               __attribute__((alias(#exitfn)));
 
 #define __setup_param(str, unique_id, fn)	
 #define __setup(str, func) 			
