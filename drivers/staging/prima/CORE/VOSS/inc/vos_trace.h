@@ -169,4 +169,22 @@ void vos_wconn_trace_init(void);
 void vos_wconn_trace_exit(void);
 #endif
 
+/*HTC_CSP_START*/
+#ifndef printf
+#define printf(fmt, args...)    printk(KERN_INFO "[WLAN] "fmt, ## args)
+#endif
+
+#ifndef errprintf
+#define errprintf(fmt, args...) printk(KERN_WARNING "[WLAN][ERR] "fmt, ## args)
+#endif
+
+#ifndef wrnprintf
+#define wrnprintf(fmt, args...) printk(KERN_WARNING "[WLAN][WRN] "fmt, ## args)
+#endif
+
+#define htc_printf(fmt, args...) printf(fmt, ## args)
+
+#define HTC_KERNEL_FEEDBACK(x) errprintf x
+/*HTC_CSP_END*/
+
 #endif

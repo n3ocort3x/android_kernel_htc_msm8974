@@ -122,6 +122,7 @@ moduleTraceInfo gVosTraceInfo[ VOS_MODULE_ID_MAX ] =
    [VOS_MODULE_ID_VOSS]       = { VOS_DEFAULT_TRACE_LEVEL, "VOS" },
    [VOS_MODULE_ID_SAP]        = { VOS_DEFAULT_TRACE_LEVEL, "SAP" },
    [VOS_MODULE_ID_HDD_SOFTAP] = { VOS_DEFAULT_TRACE_LEVEL, "HSP" },
+   [VOS_MODULE_ID_PMC]        = { VOS_DEFAULT_TRACE_LEVEL, "PMC" },
 };
 
 
@@ -133,7 +134,7 @@ void vos_trace_setLevel( VOS_MODULE_ID module, VOS_TRACE_LEVEL level )
    // Make sure the caller is passing in a valid LEVEL.
    if ( level >= VOS_TRACE_LEVEL_MAX )
    {
-      pr_err("%s: Invalid trace level %d passed in!\n", __func__, level);
+      wrnprintf("%s: Invalid trace level %d passed in!\n", __func__, level);
       return;
    }
 
@@ -156,14 +157,14 @@ void vos_trace_setValue( VOS_MODULE_ID module, VOS_TRACE_LEVEL level, v_U8_t on)
    // Make sure the caller is passing in a valid LEVEL.
    if ( level < 0  || level >= VOS_TRACE_LEVEL_MAX )
    {
-      pr_err("%s: Invalid trace level %d passed in!\n", __func__, level);
+      wrnprintf("%s: Invalid trace level %d passed in!\n", __func__, level);
       return;
    }
 
    // Make sure the caller is passing in a valid module.
    if ( module < 0 || module >= VOS_MODULE_ID_MAX )
    {
-      pr_err("%s: Invalid module id %d passed in!\n", __func__, module);
+      wrnprintf("%s: Invalid module id %d passed in!\n", __func__, module);
       return;
    }
 
@@ -345,7 +346,7 @@ void vos_trace_msg( VOS_MODULE_ID module, VOS_TRACE_LEVEL level, char *strFormat
          kmsgwconnBuffWrite(strBuffer);
          spin_unlock_irqrestore (&gVosSpinLock, irq_flag);
 #endif
-         pr_err("%s\n", strBuffer);
+         wrnprintf("%s\n", strBuffer);
       }
      va_end(val);
    }
@@ -355,10 +356,10 @@ void vos_trace_display(void)
 {
    VOS_MODULE_ID moduleId;
 
-   pr_err("     1)FATAL  2)ERROR  3)WARN  4)INFO  5)INFO_H  6)INFO_M  7)INFO_L 8)DEBUG\n");
+   wrnprintf("     1)FATAL  2)ERROR  3)WARN  4)INFO  5)INFO_H  6)INFO_M  7)INFO_L 8)DEBUG\n");
    for (moduleId = 0; moduleId < VOS_MODULE_ID_MAX; ++moduleId)
    {
-      pr_err("%2d)%s    %s        %s       %s       %s        %s         %s         %s        %s\n",
+      wrnprintf("%2d)%s    %s        %s       %s       %s        %s         %s         %s        %s\n",
              (int)moduleId,
              gVosTraceInfo[moduleId].moduleNameStr,
              (gVosTraceInfo[moduleId].moduleTraceLevel & (1 << VOS_TRACE_LEVEL_FATAL)) ? "X":" ",

@@ -488,6 +488,7 @@ int wlan_hdd_cfg80211_cancel_remain_on_channel( struct wiphy *wiphy,
                    "%s: HDD context is not valid", __func__);
         return status;
     }
+
     /* FIXME cancel currently running remain on chan.
      * Need to check cookie and cancel accordingly
      */
@@ -509,6 +510,13 @@ int wlan_hdd_cfg80211_cancel_remain_on_channel( struct wiphy *wiphy,
         hddLog( LOGE, 
                 "%s: timeout waiting for remain on channel ready indication",
                 __func__);
+    }
+
+    if (pHddCtx->isLogpInProgress)
+    {
+        VOS_TRACE(VOS_MODULE_ID_HDD, VOS_TRACE_LEVEL_ERROR,
+                  "%s: LOGP in Progress. Ignore!!!", __func__);
+        return -EAGAIN;
     }
     INIT_COMPLETION(pAdapter->cancel_rem_on_chan_var);
     /* Issue abort remain on chan request to sme.
@@ -752,7 +760,11 @@ int wlan_hdd_action( struct wiphy *wiphy, struct net_device *dev,
             }
             goto err_rem_channel;
         }
-
+        /* This will extend timer in LIM when sending Any action frame
+         * It will cover remain on channel timer till next action frame
+         * in rx direction.
+         */
+        extendedWait = (tANI_U16)wait;
         /* Wait for driver to be ready on the requested channel */
         status = wait_for_completion_interruptible_timeout(
                      &pAdapter->offchannel_tx_event,
@@ -1716,31 +1728,5 @@ static void hdd_wlan_tx_complete( hdd_adapter_t* pAdapter,
     /* Enable Queues which we have disabled earlier */
     netif_tx_start_all_queues( pAdapter->dev );
 
-}
-
-void hdd_start_p2p_go_connection_in_progress_timer( hdd_adapter_t *pAdapter )
-{
-
-    hdd_context_t *pHddCtx;
-    VOS_STATUS vos_status;
-
-    pHddCtx = WLAN_HDD_GET_CTX(pAdapter);
-
-    if (WLAN_HDD_P2P_GO == pAdapter->device_mode)
-    {
-        vos_status = vos_timer_start(&pHddCtx->hdd_p2p_go_conn_is_in_progress,
-                        WAIT_TIME_FOR_P2PGO_CONNECTION);
-        if ( !VOS_IS_STATUS_SUCCESS(vos_status))
-        {
-             VOS_TRACE( VOS_MODULE_ID_HDD, VOS_TRACE_LEVEL_ERROR,
-                  FL("Starting hdd_p2p_go_conn_is_in_progress timer failed %s"), __func__);
-        }
-    }
-}
-
-v_VOID_t wlan_hdd_p2p_go_connection_in_progresscb (v_PVOID_t userData )
-{
-     VOS_TRACE(VOS_MODULE_ID_HDD, VOS_TRACE_LEVEL_INFO,
-              "%s: Connection is in progress", __func__);
 }
 

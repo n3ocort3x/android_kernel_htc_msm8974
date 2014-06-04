@@ -1128,6 +1128,7 @@ dump_lim_del_sta( tpAniSirGlobal pMac, tANI_U32 arg1, tANI_U32 arg2, tANI_U32 ar
 
     pStaDs->mlmStaContext.cleanupTrigger = eLIM_PEER_ENTITY_DISASSOC;
     pStaDs->mlmStaContext.disassocReason = (tSirMacReasonCodes) reasonCode;
+	limLog( pMac, LOGE, FL("Trigger: %d"), pStaDs->mlmStaContext.cleanupTrigger) ;
 
     // Issue Disassoc Indication to SME.
     vos_mem_copy((tANI_U8 *) &mlmDisassocInd.peerMacAddr,

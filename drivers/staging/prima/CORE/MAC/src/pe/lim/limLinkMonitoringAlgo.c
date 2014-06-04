@@ -189,6 +189,7 @@ limDeleteStaContext(tpAniSirGlobal pMac, tpSirMsgQ limMsg)
                                   pStaDs->staAddr, sizeof(tSirMacAddr));
                     mlmDeauthInd.reasonCode    = (tANI_U8) pStaDs->mlmStaContext.disassocReason;
                     mlmDeauthInd.deauthTrigger =  pStaDs->mlmStaContext.cleanupTrigger;
+					limLog( pMac, LOGE, FL("Trigger: %d"), pStaDs->mlmStaContext.cleanupTrigger);
 
 #ifdef FEATURE_WLAN_TDLS
 #ifdef FEATURE_WLAN_TDLS_OXYGEN_DISAPPEAR_AP
@@ -400,6 +401,7 @@ limTearDownLinkWithAp(tpAniSirGlobal pMac, tANI_U8 sessionId, tSirMacReasonCodes
                       sizeof(tSirMacAddr));
         mlmDeauthInd.reasonCode    = (tANI_U8) pStaDs->mlmStaContext.disassocReason;
         mlmDeauthInd.deauthTrigger =  pStaDs->mlmStaContext.cleanupTrigger;
+		limLog( pMac, LOGE, FL("Trigger: %d"), pStaDs->mlmStaContext.cleanupTrigger) ;
 
         limPostSmeMessage(pMac, LIM_MLM_DEAUTH_IND, (tANI_U32 *) &mlmDeauthInd);
 

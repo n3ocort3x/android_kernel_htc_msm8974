@@ -61,7 +61,7 @@
 #include "limDebug.h"
 #include "limSession.h"
 #include "limUtils.h"
-#ifdef FEATURE_WLAN_CCX
+#if defined(FEATURE_WLAN_CCX) && !defined(FEATURE_WLAN_CCX_UPLOAD)
 #include "ccxApi.h"
 #endif
 
@@ -118,6 +118,7 @@ void peInitBeaconParams(tpAniSirGlobal pMac, tpPESession psessionEntry)
 tpPESession peCreateSession(tpAniSirGlobal pMac, tANI_U8 *bssid , tANI_U8* sessionId, tANI_U16 numSta)
 {
     tANI_U8 i;
+	limLog(pMac, LOGE, FL(" create a new session a session BSSID: *:%02x:%02x:%02x"),bssid[3],bssid[4],bssid[5]);
     for(i =0; i < pMac->lim.maxBssId; i++)
     {
         /* Find first free room in session table */
@@ -198,6 +199,7 @@ tpPESession peCreateSession(tpAniSirGlobal pMac, tANI_U8 *bssid , tANI_U8* sessi
 #endif
             pMac->lim.gpSession[i].fWaitForProbeRsp = 0;
             pMac->lim.gpSession[i].fIgnoreCapsChange = 0;
+			limLog(pMac, LOGE, FL(" created session = %d "),(int)pMac->lim.gpSession[i].peSessionId);
             return(&pMac->lim.gpSession[i]);
         }
     }
@@ -352,7 +354,8 @@ void peDeleteSession(tpAniSirGlobal pMac, tpPESession psessionEntry)
     tANI_U16 n;
     TX_TIMER *timer_ptr;
 
-    limLog(pMac, LOGW, FL("Trying to delete a session %d.\n "), psessionEntry->peSessionId);
+    limLog(pMac, LOGE, FL("Trying to delete a session %d. BSSID: *:%02x:%02x:%02x"), psessionEntry->peSessionId, 
+    psessionEntry->bssId[3], psessionEntry->bssId[4], psessionEntry->bssId[5]);
 
     for (n = 0; n < pMac->lim.maxStation; n++)
     {
@@ -470,7 +473,7 @@ void peDeleteSession(tpAniSirGlobal pMac, tpPESession psessionEntry)
         psessionEntry->pLimMlmReassocReq = NULL;
     }
 
-#ifdef FEATURE_WLAN_CCX
+#if defined(FEATURE_WLAN_CCX) && !defined(FEATURE_WLAN_CCX_UPLOAD)
     limCleanupCcxCtxt(pMac, psessionEntry); 
 #endif
 

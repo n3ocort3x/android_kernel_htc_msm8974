@@ -188,8 +188,14 @@ tANI_U8 peIsAnySessionActive(tpAniSirGlobal pMac)
     tANI_U8 i;
     for(i =0; i < pMac->lim.maxBssId; i++)
     {
+        limLog(pMac, LOGE, FL("sessionId: %d  valid = %d "), i, pMac->lim.gpSession[i].valid);
         if(pMac->lim.gpSession[i].valid == TRUE) 
         {
+            limLog(pMac, LOGE, FL("Active sessionId: %d \n BSID: *:%02x:%02x:%02x  opmode = %d bssIdx = %d limMlmState = %d"
+				"limSmeState = %d limAID = %d"), i,
+				pMac->lim.gpSession[i].bssId[3],pMac->lim.gpSession[i].bssId[4],pMac->lim.gpSession[i].bssId[5],
+                pMac->lim.gpSession[i].operMode,pMac->lim.gpSession[i].bssIdx,
+				pMac->lim.gpSession[i].limMlmState,pMac->lim.gpSession[i].limSmeState,pMac->lim.gpSession[i].limAID);
             return(TRUE);
         }
 

@@ -1030,7 +1030,7 @@ limAdmitControlDeleteSta(
                    ctspec, assocId);
         }
     }
-    limLog(pMac, ADMIT_CONTROL_LOGLEVEL, FL("assocId %d done"), assocId);
+    limLog(pMac,LOGE, FL("assocId %d done"), assocId);
 
     return eSIR_SUCCESS;
 }
@@ -1149,7 +1149,8 @@ limSendHalMsgDelTs(
   tANI_U16       staIdx,
   tANI_U8         tspecIdx,
   tSirDeltsReqInfo delts,
-  tANI_U8        sessionId)
+  tANI_U8        sessionId,
+  tANI_U8        *bssId)
 {
   tSirMsgQ msg;
   tpDelTsParams pDelTsParam;
@@ -1169,6 +1170,7 @@ limSendHalMsgDelTs(
   //filling message parameters.
   pDelTsParam->staIdx = staIdx;
   pDelTsParam->tspecIdx = tspecIdx;
+  vos_mem_copy(&pDelTsParam->bssId, bssId, sizeof(tSirMacAddr));
 
   PELOGW(limLog(pMac, LOGW, FL("calling wdaPostCtrlMsg()"));)
   MTRACE(macTraceMsgTx(pMac, sessionId, msg.type));

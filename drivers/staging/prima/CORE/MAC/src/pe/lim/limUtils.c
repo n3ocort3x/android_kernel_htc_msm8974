@@ -88,6 +88,7 @@ static const tANI_U8 aUnsortedChannelList[]= {52,56,60,64,100,104,108,112,116,
 //#define LIM_MAX_ACTIVE_SESSIONS 3  //defined temporarily for BT-AMP SUPPORT 
 #define SUCCESS 1                   //defined temporarily for BT-AMP
 
+#define MAX_BA_WINDOW_SIZE_FOR_CISCO 25
 /** -------------------------------------------------------------
 \fn limAssignDialogueToken
 \brief Assigns dialogue token.
@@ -185,7 +186,7 @@ limSearchAndDeleteDialogueToken(tpAniSirGlobal pMac, tANI_U8 token, tANI_U16 ass
         //if the node being deleted is the last one then we also need to move the tail pointer to the prevNode.
         if(NULL == pCurrNode->next)
               pMac->lim.pDialogueTokenTail = pPrevNode;
-        palFreeMemory(pMac->hHdd, (void *) pCurrNode);
+        vos_mem_free(pCurrNode);
         return eSIR_SUCCESS;
     }
 
@@ -690,6 +691,12 @@ char *limMsgStr(tANI_U32 msgType)
             return "eWNI_PMC_EXIT_BMPS_IND";
         case eWNI_SME_SET_BCN_FILTER_REQ:
             return "eWNI_SME_SET_BCN_FILTER_REQ";
+#if defined(FEATURE_WLAN_CCX) && defined(FEATURE_WLAN_CCX_UPLOAD)
+        case eWNI_SME_GET_TSM_STATS_REQ:
+            return "eWNI_SME_GET_TSM_STATS_REQ";
+        case eWNI_SME_GET_TSM_STATS_RSP:
+            return "eWNI_SME_GET_TSM_STATS_RSP";
+#endif /* FEATURE_WLAN_CCX && FEATURE_WLAN_CCX_UPLOAD */
         default:
             return "INVALID SME message";
     }
@@ -1086,11 +1093,11 @@ limCleanupMlm(tpAniSirGlobal pMac)
         tx_timer_deactivate(&pMac->lim.limTimers.gLimRemainOnChannelTimer);
         tx_timer_delete(&pMac->lim.limTimers.gLimRemainOnChannelTimer);
 
-#ifdef FEATURE_WLAN_CCX
+#if defined(FEATURE_WLAN_CCX) && !defined(FEATURE_WLAN_CCX_UPLOAD)
         // Deactivate and delete TSM
         tx_timer_deactivate(&pMac->lim.limTimers.gLimCcxTsmTimer);
         tx_timer_delete(&pMac->lim.limTimers.gLimCcxTsmTimer);
-#endif
+#endif /* FEATURE_WLAN_CCX && !FEATURE_WLAN_CCX_UPLOAD */
 
         tx_timer_deactivate(&pMac->lim.limTimers.gLimDisassocAckTimer);
         tx_timer_delete(&pMac->lim.limTimers.gLimDisassocAckTimer);
@@ -5468,7 +5475,12 @@ limValidateDeltsReq(tpAniSirGlobal pMac, tpSirDeltsReq pDeltsReq, tSirMacAddr pe
            psessionEntry->gLimEdcaParams[upToAc(tsinfo->traffic.userPrio)].aci.acm)
       {
         //send message to HAL to delete TS
-        if(eSIR_SUCCESS != limSendHalMsgDelTs(pMac, pSta->staIndex, tspecIdx, pDeltsReq->req, psessionEntry->peSessionId))
+        if(eSIR_SUCCESS != limSendHalMsgDelTs(pMac,
+                                              pSta->staIndex,
+                                              tspecIdx,
+                                              pDeltsReq->req,
+                                              psessionEntry->peSessionId,
+                                              psessionEntry->bssId))
         {
           limLog(pMac, LOGW, FL("DelTs with UP %d failed in limSendHalMsgDelTs - ignoring request"),
                            tsinfo->traffic.userPrio);
@@ -5728,22 +5740,17 @@ void limDelAllBASessions(tpAniSirGlobal pMac)
 \return None
 -------------------------------------------------------------*/
 
-void limDelAllBASessionsBtc(tpAniSirGlobal pMac)
+void limDelPerBssBASessionsBtc(tpAniSirGlobal pMac)
 {
-    tANI_U32 i;
+    tANI_U8 sessionId;
     tpPESession pSessionEntry;
-
-    for (i = 0; i < pMac->lim.maxBssId; i++)
+    pSessionEntry = peFindSessionByBssid(pMac,pMac->btc.btcBssfordisableaggr,
+                                                                &sessionId);
+    if (pSessionEntry)
     {
-        pSessionEntry = peFindSessionBySessionId(pMac, i);
-        if (pSessionEntry)
-        {
-            if (SIR_BAND_2_4_GHZ ==
-                limGetRFBand(pSessionEntry->currentOperChannel))
-            {
-                limDeleteBASessions(pMac, pSessionEntry, BA_RECIPIENT);
-            }
-        }
+        PELOGW(limLog(pMac, LOGW,
+        "Deleting the BA for session %d as host got BTC event", sessionId);)
+        limDeleteBASessions(pMac, pSessionEntry, BA_RECIPIENT);
     }
 }
 
@@ -5901,7 +5908,17 @@ tSirRetStatus limPostMlmAddBAReq( tpAniSirGlobal pMac,
   // Requesting the ADDBA recipient to populate the size.
   // If ADDBA is accepted, a non-zero buffer size should
   // be returned in the ADDBA Rsp
-  pMlmAddBAReq->baBufferSize = 0;
+  if ((TRUE == psessionEntry->isCiscoVendorAP) &&
+        (eHT_CHANNEL_WIDTH_80MHZ != pStaDs->htSupportedChannelWidthSet))
+  {
+      /* Cisco AP has issues in receiving more than 25 "mpdu in ampdu"
+          causing very low throughput in HT40 case */
+      limLog( pMac, LOGW,
+          FL( "Requesting ADDBA with Cisco 1225 AP, window size 25"));
+      pMlmAddBAReq->baBufferSize = MAX_BA_WINDOW_SIZE_FOR_CISCO;
+  }
+  else
+      pMlmAddBAReq->baBufferSize = 0;
 
   limLog( pMac, LOGW,
       FL( "Requesting an ADDBA to setup a %s BA session with STA %d for TID %d" ),

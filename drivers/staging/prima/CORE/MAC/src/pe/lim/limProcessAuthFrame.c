@@ -552,7 +552,7 @@ limProcessAuthFrame(tpAniSirGlobal pMac, tANI_U8 *pRxPacketInfo, tpPESession pse
 
     pRxAuthFrameBody = &rxAuthFrame;
 
-   PELOGW(limLog(pMac, LOGW,
+   PELOGE(limLog(pMac, LOGW,
            FL("Received Auth frame with type=%d seqnum=%d, status=%d (%d)"),
            (tANI_U32) pRxAuthFrameBody->authAlgoNumber,
            (tANI_U32) pRxAuthFrameBody->authTransactionSeqNumber,

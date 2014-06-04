@@ -338,6 +338,14 @@ limProcessDeauthFrame(tpAniSirGlobal pMac, tANI_U8 *pRxPacketInfo, tpPESession p
                         
                         return;
 
+                    case eLIM_MLM_WT_ADD_STA_RSP_STATE:
+                         psessionEntry->fDeauthReceived = true;
+                         PELOGW(limLog(pMac, LOGW,
+                            FL("Received Deauth frame with Reason Code %d from Peer"),
+                                  reasonCode);
+                         limPrintMacAddr(pMac, pHdr->sa, LOGW);)
+                         return ;
+
                     case eLIM_MLM_IDLE_STATE:
                     case eLIM_MLM_LINK_ESTABLISHED_STATE:
 #ifdef FEATURE_WLAN_TDLS
@@ -431,6 +439,7 @@ limProcessDeauthFrame(tpAniSirGlobal pMac, tANI_U8 *pRxPacketInfo, tpPESession p
     } 
     pStaDs->mlmStaContext.disassocReason = (tSirMacReasonCodes)reasonCode;
     pStaDs->mlmStaContext.cleanupTrigger = eLIM_PEER_ENTITY_DEAUTH;
+	limLog( pMac, LOGE, FL("Trigger: %d"), pStaDs->mlmStaContext.cleanupTrigger) ;
 
     /// Issue Deauth Indication to SME.
     vos_mem_copy((tANI_U8 *) &mlmDeauthInd.peerMacAddr,

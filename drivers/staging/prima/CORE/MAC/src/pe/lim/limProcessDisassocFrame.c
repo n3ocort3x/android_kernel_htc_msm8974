@@ -292,6 +292,7 @@ limProcessDisassocFrame(tpAniSirGlobal pMac, tANI_U8 *pRxPacketInfo, tpPESession
 
     pStaDs->mlmStaContext.cleanupTrigger = eLIM_PEER_ENTITY_DISASSOC;
     pStaDs->mlmStaContext.disassocReason = (tSirMacReasonCodes) reasonCode;
+	limLog( pMac, LOGE, FL("Trigger: %d"), pStaDs->mlmStaContext.cleanupTrigger) ;
 
     // Issue Disassoc Indication to SME.
     vos_mem_copy((tANI_U8 *) &mlmDisassocInd.peerMacAddr,
