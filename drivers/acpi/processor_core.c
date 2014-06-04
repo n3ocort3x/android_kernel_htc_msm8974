@@ -285,7 +285,7 @@ static struct acpi_object_list *__cpuinit acpi_processor_alloc_pdc(void)
 	return obj_list;
 }
 
-static int __cpuinit
+static int
 acpi_processor_eval_pdc(acpi_handle handle, struct acpi_object_list *pdc_in)
 {
 	acpi_status status = AE_OK;

@@ -95,7 +95,7 @@ void cpu_hotplug_driver_unlock(void)
 ssize_t arch_cpu_probe(const char *buf, size_t count) { return -1; }
 ssize_t arch_cpu_release(const char *buf, size_t count) { return -1; }
 #else
-static struct task_struct *idle_thread_array[NR_CPUS] __cpuinitdata ;
+static struct task_struct *idle_thread_array[NR_CPUS] ;
 #define get_idle_for_cpu(x)      (idle_thread_array[(x)])
 #define set_idle_for_cpu(x, p)   (idle_thread_array[(x)] = (p))
 #endif
@@ -345,7 +345,7 @@ void __inquire_remote_apic(int apicid)
 	}
 }
 
-int __cpuinit
+int
 wakeup_secondary_cpu_via_nmi(int logical_apicid, unsigned long start_eip)
 {
 	unsigned long send_status, accept_status = 0;
@@ -376,7 +376,7 @@ wakeup_secondary_cpu_via_nmi(int logical_apicid, unsigned long start_eip)
 	return (send_status | accept_status);
 }
 
-static int __cpuinit
+static int
 wakeup_secondary_cpu_via_init(int phys_apicid, unsigned long start_eip)
 {
 	unsigned long send_status, accept_status = 0;

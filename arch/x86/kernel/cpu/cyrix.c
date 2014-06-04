@@ -12,7 +12,7 @@
 
 #include "cpu.h"
 
-static void __cpuinit __do_cyrix_devid(unsigned char *dir0, unsigned char *dir1)
+static void __do_cyrix_devid(unsigned char *dir0, unsigned char *dir1)
 {
 	unsigned char ccr2, ccr3;
 
@@ -41,7 +41,7 @@ static void __cpuinit __do_cyrix_devid(unsigned char *dir0, unsigned char *dir1)
 	}
 }
 
-static void __cpuinit do_cyrix_devid(unsigned char *dir0, unsigned char *dir1)
+static void do_cyrix_devid(unsigned char *dir0, unsigned char *dir1)
 {
 	unsigned long flags;
 
@@ -70,7 +70,7 @@ static const char __cpuinitconst cyrix_model_mult1[] = "12??43";
 static const char __cpuinitconst cyrix_model_mult2[] = "12233445";
 
 
-static void __cpuinit check_cx686_slop(struct cpuinfo_x86 *c)
+static void check_cx686_slop(struct cpuinfo_x86 *c)
 {
 	unsigned long flags;
 
@@ -95,7 +95,7 @@ static void __cpuinit check_cx686_slop(struct cpuinfo_x86 *c)
 }
 
 
-static void __cpuinit set_cx86_reorder(void)
+static void set_cx86_reorder(void)
 {
 	u8 ccr3;
 
@@ -110,7 +110,7 @@ static void __cpuinit set_cx86_reorder(void)
 	setCx86(CX86_CCR3, ccr3);
 }
 
-static void __cpuinit set_cx86_memwb(void)
+static void set_cx86_memwb(void)
 {
 	printk(KERN_INFO "Enable Memory-Write-back mode on Cyrix/NSC processor.\n");
 
@@ -123,7 +123,7 @@ static void __cpuinit set_cx86_memwb(void)
 }
 
 
-static void __cpuinit geode_configure(void)
+static void geode_configure(void)
 {
 	unsigned long flags;
 	u8 ccr3;
@@ -146,7 +146,7 @@ static void __cpuinit geode_configure(void)
 	local_irq_restore(flags);
 }
 
-static void __cpuinit early_init_cyrix(struct cpuinfo_x86 *c)
+static void early_init_cyrix(struct cpuinfo_x86 *c)
 {
 	unsigned char dir0, dir0_msn, dir1 = 0;
 
@@ -165,7 +165,7 @@ static void __cpuinit early_init_cyrix(struct cpuinfo_x86 *c)
 	}
 }
 
-static void __cpuinit init_cyrix(struct cpuinfo_x86 *c)
+static void init_cyrix(struct cpuinfo_x86 *c)
 {
 	unsigned char dir0, dir0_msn, dir0_lsn, dir1 = 0;
 	char *buf = c->x86_model_id;
@@ -299,7 +299,7 @@ static void __cpuinit init_cyrix(struct cpuinfo_x86 *c)
 	return;
 }
 
-static void __cpuinit init_nsc(struct cpuinfo_x86 *c)
+static void init_nsc(struct cpuinfo_x86 *c)
 {
 
 	
@@ -327,7 +327,7 @@ static inline int test_cyrix_52div(void)
 	return (unsigned char) (test >> 8) == 0x02;
 }
 
-static void __cpuinit cyrix_identify(struct cpuinfo_x86 *c)
+static void cyrix_identify(struct cpuinfo_x86 *c)
 {
 	
 	if (c->x86 == 4 && test_cyrix_52div()) {
