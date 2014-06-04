@@ -30,7 +30,7 @@ static __cpuinitdata cycles_t last_tsc;
 static __cpuinitdata cycles_t max_warp;
 static __cpuinitdata int nr_warps;
 
-static __cpuinit void check_tsc_warp(unsigned int timeout)
+static void check_tsc_warp(unsigned int timeout)
 {
 	cycles_t start, now, prev, end;
 	int i;
@@ -73,7 +73,7 @@ static inline unsigned int loop_timeout(int cpu)
 	return (cpumask_weight(cpu_core_mask(cpu)) > 1) ? 2 : 20;
 }
 
-void __cpuinit check_tsc_sync_source(int cpu)
+void check_tsc_sync_source(int cpu)
 {
 	int cpus = 2;
 
@@ -117,7 +117,7 @@ void __cpuinit check_tsc_sync_source(int cpu)
 	atomic_inc(&stop_count);
 }
 
-void __cpuinit check_tsc_sync_target(void)
+void check_tsc_sync_target(void)
 {
 	int cpus = 2;
 

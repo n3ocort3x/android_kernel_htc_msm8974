@@ -573,7 +573,7 @@ static void __init check_system_tsc_reliable(void)
 		tsc_clocksource_reliable = 1;
 }
 
-__cpuinit int unsynchronized_tsc(void)
+int unsynchronized_tsc(void)
 {
 	if (!cpu_has_tsc || tsc_unstable)
 		return 1;

@@ -527,7 +527,7 @@ ia64_mca_register_cpev (int cpev)
 }
 #endif 
 
-void __cpuinit
+void
 ia64_mca_cmc_vector_setup (void)
 {
 	cmcv_reg_t	cmcv;
@@ -1406,7 +1406,7 @@ static struct irqaction mca_cpep_irqaction = {
 #endif 
 
 
-static void __cpuinit
+static void
 format_mca_init_stack(void *mca_data, unsigned long offset,
 		const char *type, int cpu)
 {
@@ -1434,7 +1434,7 @@ static void * __init_refok mca_bootmem(void)
 	                    KERNEL_STACK_SIZE, 0);
 }
 
-void __cpuinit
+void
 ia64_mca_cpu_init(void *cpu_data)
 {
 	void *pal_vaddr;

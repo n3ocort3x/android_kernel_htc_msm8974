@@ -471,7 +471,7 @@ EXPORT_SYMBOL(resync_core_dcache);
 #endif
 
 #ifdef CONFIG_HOTPLUG_CPU
-int __cpuexit __cpu_disable(void)
+int __cpu_disable(void)
 {
 	unsigned int cpu = smp_processor_id();
 
@@ -484,7 +484,7 @@ int __cpuexit __cpu_disable(void)
 
 static DECLARE_COMPLETION(cpu_killed);
 
-int __cpuexit __cpu_die(unsigned int cpu)
+int __cpu_die(unsigned int cpu)
 {
 	return wait_for_completion_timeout(&cpu_killed, 5000);
 }

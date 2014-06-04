@@ -687,7 +687,7 @@ static inline unsigned int decode_config4(struct cpuinfo_mips *c)
 	return config4 & MIPS_CONF_M;
 }
 
-static void __cpuinit decode_configs(struct cpuinfo_mips *c)
+static void decode_configs(struct cpuinfo_mips *c)
 {
 	int ok;
 
@@ -1018,7 +1018,7 @@ EXPORT_SYMBOL(__ua_limit);
 const char *__cpu_name[NR_CPUS];
 const char *__elf_platform;
 
-__cpuinit void cpu_probe(void)
+void cpu_probe(void)
 {
 	struct cpuinfo_mips *c = &current_cpu_data;
 	unsigned int cpu = smp_processor_id();
@@ -1097,7 +1097,7 @@ __cpuinit void cpu_probe(void)
 #endif
 }
 
-__cpuinit void cpu_report(void)
+void cpu_report(void)
 {
 	struct cpuinfo_mips *c = &current_cpu_data;
 
