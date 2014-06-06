@@ -17,8 +17,6 @@ ifeq ($(KERNEL_BUILD),1)
 	WLAN_ROOT := drivers/staging/prima
 endif
 
-endif
-
 ifeq ($(KERNEL_BUILD), 0)
 	# These are configurable via Kconfig for kernel-based builds
 	# Need to explicitly configure for Android-based builds
@@ -68,7 +66,6 @@ PANIC_ON_BUG := 1
 
 #Re-enable wifi on WDI timeout
 RE_ENABLE_WIFI_ON_WDI_TIMEOUT := 0
-
 
 ifeq ($(CONFIG_CFG80211),y)
 HAVE_CFG80211 := 1
